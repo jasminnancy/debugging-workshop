@@ -1,9 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('joke-form')
   const jokeList = document.getElementById('joke-list')
-  const newJokeLi = document.createElement('li')
-  const username = document.getElementById('name-input').value
   let joke;
+  let username;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    username = document.getElementById('name-input').value
+
+    if (username === "") {
+      alert("Name cannot be blank!")
+    } else {
+      fetchJoke()
+    }
+  })
 
   function fetchJoke(){
     fetch('https://icanhazdadjoke.com/', {
@@ -12,16 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
     .then(res => res.json())
-    .then(jokeData => joke = jokeData.joke)
+    .then(data => {
+      joke = data.joke
+
+      //appends new joke to list
+      const newJokeLi = document.createElement('li')
+      newJokeLi.innerHTML = `<span class="username">${username} says:</span> ${joke}`
+      jokeList.appendChild(newJokeLi)
+    })
   }
-
-  form.addEventListener('submit', (event) => {
-
-    if(username === "") return;
-    fetchJoke()
-    newJokeLi.innerHTML = `
-    <span class="username">${username} says:</span> ${joke}
-    `
-    jokeList.appendChild(newJokeLi)
-  })
 })
